@@ -20,11 +20,14 @@
   "homepage": "https://github.com/goliatone/simple-task-manager#readme",
   "dependencies": {
     "gextend": "^0.3.0",
-    "gkeypath": "^0.7.2"
+    "gkeypath": "^0.7.2",
+    "noop-console": "^0.8.0",
+    "redis": "^2.8.0"
   },
   "devDependencies": {
     "bogota": "^2.0.4",
     "nyc": "^14.1.1",
+    "redis-mock": "^0.44.0",
     "sinon": "^7.3.2",
     "tap-spec": "^5.0.0",
     "tape": "^4.11.0",
