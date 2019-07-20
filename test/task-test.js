@@ -1,8 +1,6 @@
 'use strict';
 
 const test = require('tape');
-const sinon = require('sinon');
-
 const Task = require('../lib').Task;
 
 test('Task has defaults', t => {
