@@ -21,8 +21,8 @@
   "dependencies": {
     "gextend": "^0.3.0",
     "gkeypath": "^0.7.2",
-    "noop-console": "^0.8.0",
-    "redis": "^2.8.0"
+    "ioredis": "^4.11.2",
+    "noop-console": "^0.8.0"
   },
   "devDependencies": {
     "bogota": "^2.0.4",
