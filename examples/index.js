@@ -43,4 +43,15 @@ scheduler.on('task.created', event => {
 //     console.log('------------------------------\n');
 // });
 
-scheduler.loadAllSources();
+// scheduler.loadAllSources();
+
+//Add a new task
+// scheduler.add({
+//     id: 'bf404d3e-857b-438d-80f0-52bfa55fc9cc',
+//     data: {},
+//     repeat: true,
+// });
+
+scheduler.remove({
+    id: 'bf404d3e-857b-438d-80f0-52bfa55fc9cc'
+}).catch(console.error);
