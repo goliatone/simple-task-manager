@@ -138,6 +138,6 @@ test.only('shouldRun: will enqueue tasks with an errorCount lower than maxTries'
         errorCount: 1
     });
     const state = task.shouldRun('error');
-    t.equals(state.action, 'enqueue', 'action should be "enqueue"');
+    t.equals(state.action, 'delay', 'action should be "delay"');
     t.end();
 });
