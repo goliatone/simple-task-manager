@@ -101,9 +101,43 @@ test('Setting a task id should create its key', t => {
 
     t.notOk(task.id);
     t.notOk(task.key);
-    task.id = 'test';
-    t.ok(task.id);
-    t.ok(task.key);
 
+    task.id = 'test';
+
+    t.ok(task.id, 'we should have an id');
+    t.ok(task.key, 'we should have a key');
+
+    t.end();
+});
+
+test('Infinity will be serialized properly for maxRuns and maxTries', t => {
+    const task = new Task({
+        maxRuns: Infinity,
+        maxTries: Infinity
+    });
+
+    const json = task.deserialize(task.serialize());
+    t.equals(json.maxRuns, Infinity, 'maxRuns should be Infinity');
+    t.equals(json.maxTries, Infinity, 'maxTries should be Infinity');
+    t.end();
+});
+
+test('shouldRun: will fail tasks with an errorCount higher than maxTries', t => {
+    const task = new Task({
+        maxTries: 2,
+        errorCount: 3
+    });
+    const state = task.shouldRun('error');
+    t.equals(state.action, 'fail', 'action should be "fail"');
+    t.end();
+});
+
+test.only('shouldRun: will enqueue tasks with an errorCount lower than maxTries', t => {
+    const task = new Task({
+        maxTries: 3,
+        errorCount: 1
+    });
+    const state = task.shouldRun('error');
+    t.equals(state.action, 'enqueue', 'action should be "enqueue"');
     t.end();
 });
