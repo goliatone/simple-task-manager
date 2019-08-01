@@ -1,6 +1,6 @@
 {
   "name": "simple-task-manager",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simple Task manager using Redis",
   "main": "index.js",
   "scripts": {
