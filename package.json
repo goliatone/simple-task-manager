@@ -26,12 +26,28 @@
   },
   "devDependencies": {
     "bogota": "^2.0.4",
+    "metascraper": "^5.6.3",
+    "metascraper-author": "^5.6.3",
+    "metascraper-clearbit": "^5.6.3",
+    "metascraper-date": "^5.6.3",
+    "metascraper-description": "^5.6.3",
+    "metascraper-image": "^5.6.3",
+    "metascraper-logo": "^5.6.3",
+    "metascraper-publisher": "^5.6.3",
+    "metascraper-readability": "^5.6.3",
+    "metascraper-title": "^5.6.3",
+    "metascraper-url": "^5.6.3",
+    "node-summary": "^1.2.0",
     "nyc": "^14.1.1",
     "redis-mock": "^0.44.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "sinon": "^7.3.2",
+    "summarize": "^1.5.0",
     "tap-spec": "^5.0.0",
     "tape": "^4.11.0",
     "tape-catch": "^1.0.6",
+    "unfluff": "^3.2.0",
     "watch": "^1.0.2"
   }
 }
