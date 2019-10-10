@@ -20,9 +20,6 @@ const scheduler = new Scheduler({
     logger: console
 });
 
-scheduler.checkClientConfiguration();
-
-
 
 /**
  * We can use this to notify over MQTT about
