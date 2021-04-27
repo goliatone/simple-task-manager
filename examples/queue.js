@@ -1,27 +1,12 @@
 'use strict';
 
-function logger(name) {
-    return function $log(...args) {
-        let time = new Date();
-        time = '[' +
-            ('0' + time.getHours()).slice(-2) + ':' +
-            ('0' + time.getMinutes()).slice(-2) + ':' +
-            ('0' + time.getSeconds()).slice(-2) + ':' +
-            ('0' + time.getMilliseconds()).slice(-3) + ']';
-
-        if (typeof args[0] === 'string') {
-            args = ['%s %s |\t' + args.shift(), time, name, ...args];
-        }
-
-        console.log.apply(null, args);
-    }
-}
-
+const logger = require('./log');
 const log = logger('queue ');
 
 const Scheduler = require('../lib/scheduler');
 
 let counter = 0;
+
 const scheduler = new Scheduler({
     backend: {
         host: 'localhost',
@@ -65,7 +50,7 @@ addTaskWorker();
 function addTaskWorker() {
     counter++;
 
-    const index = getUid();
+    const index = scheduler.backend.getUid();
     log('Create task %s, ID: "%s"', counter, index);
 
     scheduler.addTask({
@@ -82,15 +67,4 @@ function addTaskWorker() {
         else log('Done!');
         // setTimeout(addTaskWorker, randomInt(200, 1000));
     });
-}
-
-function getUid(len = 20) {
-    const timestamp = (new Date()).getTime().toString(36);
-    const randomString = (len) => [...Array(len)].map(_ => Math.random().toString(36)[3]).join('');
-    len = len - (timestamp.length + 1);
-    return `${timestamp}-${randomString(len)}`;
-}
-
-function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
 }
