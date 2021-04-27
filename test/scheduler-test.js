@@ -4,7 +4,7 @@ const test = require('tape');
 const sinon = require('sinon');
 const redis = require('redis-mock');
 
-const clientFactory = _ => {
+const createBackend = _ => {
     return redis.createClient();
 }
 
@@ -21,19 +21,20 @@ test('Scheduler has defaults', t => {
 test('Scheduler can add new tasks', t => {
     const scheduler = new Scheduler({
         autoinitialize: true,
-        clientFactory,
+        createBackend,
     });
 
     scheduler.addTask({
-
+        id: 'a'
     });
+
     t.end();
 });
 
 test.skip('Scheduler can add remove tasks', t => {
     const scheduler = new Scheduler({
         autoinitialize: true,
-        clientFactory,
+        createBackend,
     });
 
     scheduler.remove({
