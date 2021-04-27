@@ -3,7 +3,7 @@
 const test = require('tape');
 const sinon = require('sinon');
 
-const createClient = require('../lib/createClient');
+const createClient = require('../lib/backends/createClient');
 
 test('Lib exports createClient', t => {
     t.ok(createClient, 'Exports create client');
