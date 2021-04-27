@@ -1,7 +1,9 @@
 'use strict';
 
+const logger = require('./log');
 const Worker = require('../lib/workers');
-const TaskRunError = require('../lib/error').TaskRunError;
+
+const log = logger('worker');
 
 const worker = new Worker({
     queue: 'link.archive',
@@ -10,49 +12,27 @@ const worker = new Worker({
         port: 6379
     }
 });
-worker.run(taskHandler);
-
-function logger(name) {
-    return function $log(...args) {
-        let time = new Date();
-        time = '[' +
-            ('0' + time.getHours()).slice(-2) + ':' +
-            ('0' + time.getMinutes()).slice(-2) + ':' +
-            ('0' + time.getSeconds()).slice(-2) + ':' +
-            ('00' + time.getMilliseconds()).slice(-3) + ']';
-
-        if (typeof args[0] === 'string') {
-            args = ['%s %s |\t' + args.shift(), time, name, ...args];
-        }
-
-        console.log.apply(null, args);
-    }
-}
-
-const log = logger('worker');
 
 
-worker.on('task.ran', task => {
-    log('Job complete...\n');
-    log('- This "task" has run "%s" times', task.runs);
-    log('- "job" ran "%s" times with %s errors and %s failures', worker.runs - worker.errors, worker.errors, worker.failed);
-    // log('- execution took %sms', timeout);
-    log('----------------------\n');
-});
-
-worker.on('task.added', task => {
-    log('! on task added');
-    log('* Task has been ran %s before.', task.runs);
-    log('* Pulled queue: "%s" task id "%s"', 'tasks:active', task.id);
-});
-
-worker.on('task.error', task => {
-    log('\t----- ERROR ----');
-    log('\tTask "%s" failed...', task.id);
-    log('\tErrors: %s/%s', task.errorCount, task.maxTries);
-    // log('\tserialized: %s', task.serialize());
-    log('-------------------\n');
-});
+worker
+    .on('task.ran', task => {
+        log('Job complete...\n');
+        log('- This "task" has run "%s" times', task.runs);
+        log('- "job" ran "%s" times with %s errors and %s failures', worker.runs - worker.errors, worker.errors, worker.failed);
+        // log('- execution took %sms', timeout);
+        log('----------------------\n');
+    }).on('task.added', task => {
+        log('! on task added');
+        log('* Task has been ran %s before.', task.runs);
+        log('* Pulled queue: "%s" task id "%s"', 'tasks:active', task.id);
+    }).on('task.error', task => {
+        log('\t----- ERROR ----');
+        log('\tTask "%s" failed...', task.id);
+        log('\tErrors: %s/%s', task.errorCount, task.maxTries);
+        // log('\tserialized: %s', task.serialize());
+        log('-------------------\n');
+    })
+    .run(taskHandler);
 
 async function taskHandler(task) {
     log('-------- WORKER --------');
