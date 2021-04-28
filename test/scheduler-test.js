@@ -15,16 +15,13 @@ test('Scheduler has defaults', t => {
     t.end();
 });
 
-
-
-
-test('Scheduler can add new tasks', t => {
+test('Scheduler can add new tasks', async t => {
     const scheduler = new Scheduler({
         autoinitialize: true,
-        createBackend,
+        backend: createBackend(),
     });
 
-    scheduler.addTask({
+    await scheduler.addTask({
         id: 'a'
     });
 
@@ -34,7 +31,7 @@ test('Scheduler can add new tasks', t => {
 test.skip('Scheduler can add remove tasks', t => {
     const scheduler = new Scheduler({
         autoinitialize: true,
-        createBackend,
+        backend: createBackend(),
     });
 
     scheduler.remove({
