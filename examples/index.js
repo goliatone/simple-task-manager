@@ -32,12 +32,12 @@ const client = createClient({
 
     let keys = await client.keys('*');
     //Get all task related keys:
-    let map = {
-        'tasks:active': [],
-        'tasks:failed': [],
-        'tasks:completed': [],
-        'task:ids': [],
-        'tasks:definitions': {},
+    let context = {
+        ids: [],
+        active: [],
+        failed: [],
+        completed: [],
+        definitions: []
     };
 
     /**
@@ -46,8 +46,8 @@ const client = createClient({
      */
     for (let key of keys) {
         if (key.indexOf('tasks:') !== 0) continue;
-
-        if (map.hasOwnProperty(key)) {
+        let [_, identifier] = key.split(':');
+        if (context.hasOwnProperty(identifier)) {
             let tasks = await client.lrange(key, 0, -1);
 
             if (key === 'tasks:completed') {
@@ -56,27 +56,27 @@ const client = createClient({
                     //Parse as JSON
                     task = JSON.parse(task);
                     //Store task in 'tasks:completed:data'
-                    //map['tasks:completed:data'] = task;
+                    // context.completed.tasks.push(task);
                     //Store id in tasks
                     return task.id;
                 });
             }
-            map[key] = tasks;
+            context.completed = tasks;
         } else {
             let task = await client.get(key);
-            map['tasks:definitions'][key] = JSON.parse(task);
-            map['task:ids'].push(key);
+            context.definitions[key] = JSON.parse(task);
+            context.ids.push(key);
         }
     }
 
     //OK: How many of our active tasks are actually completed?
-    let completed = intersect(map['tasks:failed'], map['tasks:active']);
+    let completed = intersect(context.failed, context.active);
     if (completed.length) {
         //We should just remove them from active
         console.log('completed', completed);
     }
 
-    let failed = intersect(map['tasks:failed'], map['tasks:active']);
+    let failed = intersect(context.failed, context.active);
     if (failed.length) {
         //We should just remove them from active
         console.log('failed', failed);
@@ -85,12 +85,12 @@ const client = createClient({
     //We should iterate over the active tasks
     //check when they were added - Date.now() > stale_threshold
     //Retry that task again...
-    if (map['task:ids'].length) {
+    if (context.ids.length) {
         console.log('we have tasks hanging around...');
-        for (let id in map['tasks:definitions']) {
-            let task = map['tasks:definitions'][id];
-            console.log(task)
-                // scheduler.addTask(task);
+        for (let id in context.definitions) {
+            let task = context.definitions[id];
+            console.log(task);
+            // scheduler.addTask(task);
         }
     }
 
@@ -107,7 +107,7 @@ const client = createClient({
         replMode: 'strict' // 'use strict'
     });
 
-    server.context.map = map;
+    server.context.tasks = context;
     server.context.client = client;
     server.context.scheduler = scheduler;
 })();
