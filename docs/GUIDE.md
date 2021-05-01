@@ -75,9 +75,10 @@ docker exec -ti c19a0f737a29 redis-cli --csv psubscribe '__key*__:*'
 `queue`: Tasks pushed to the list are ready to be picked up and worked on
 `task:<key>`: Holds a serialized representation of task with id `<key>`.
 `task:<key>:ttl`: Holds the TTL if a repeating task. (cron/periodicity)
+`tasks:ids`: List of **all** task ids
 `tasks:active`: List of **active** task ids
 `tasks:failed`: List of **failed**task ids
-`tasks:completed`: List of **completed** task ids
+`tasks:completed`: List of **completed** serialized tasks
 
 The normal flow of a task would be:
 
@@ -161,3 +162,14 @@ valid key configs: AKE or xKE
 
 
 Redis >= 6.2 added `GET`, `EXAT`, `PXAT`, `KEEPTTL` to `SET` command.
+
+
+Add some methods to work with task time management.
+
+```js
+scheduler.addTask(task)
+    .withDelay(1000);
+
+scheduler.addTask(task)
+    .interval(Date, Date);
+```
