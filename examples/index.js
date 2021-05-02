@@ -31,6 +31,7 @@ const client = createClient({
 (async _ => {
 
     let keys = await client.keys('*');
+
     //Get all task related keys:
     let context = {
         ids: [],
@@ -46,6 +47,8 @@ const client = createClient({
      */
     for (let key of keys) {
         if (key.indexOf('tasks:') !== 0) continue;
+        if (key.indexOf(':ttl') !== -1) continue;
+
         let [_, identifier] = key.split(':');
         if (context.hasOwnProperty(identifier)) {
             let tasks = await client.lrange(key, 0, -1);
@@ -54,7 +57,11 @@ const client = createClient({
                 //Iterate over tasks. 
                 tasks = tasks.map(task => {
                     //Parse as JSON
-                    task = JSON.parse(task);
+                    try {
+                        task = JSON.parse(task);
+                    } catch (error) {
+                        console.error(error);
+                    }
                     //Store task in 'tasks:completed:data'
                     // context.completed.tasks.push(task);
                     //Store id in tasks
@@ -62,10 +69,16 @@ const client = createClient({
                 });
             }
             context.completed = tasks;
-        } else {
+        } else if (key.indexOf('::ttl') !== -1) {} else {
+            console.log('get key %s', key);
             let task = await client.get(key);
-            context.definitions[key] = JSON.parse(task);
-            context.ids.push(key);
+            try {
+                context.definitions[key] = JSON.parse(task);
+                context.ids.push(key);
+            } catch (error) {
+                console.log('error', key);
+                console.error(error);
+            }
         }
     }
 
