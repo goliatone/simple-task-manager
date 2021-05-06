@@ -19,15 +19,18 @@
   },
   "homepage": "https://github.com/goliatone/simple-task-manager#readme",
   "dependencies": {
+    "cron-parser": "^3.5.0",
+    "cron-validate": "^1.4.3",
     "gextend": "^0.8.0",
     "gkeypath": "^0.11.0",
-    "ioredis": "^4.27.1"
+    "ioredis": "^4.27.1",
+    "luxon": "^1.26.0"
   },
   "devDependencies": {
     "bogota": "^2.0.4",
     "node-summary": "^1.2.0",
     "nyc": "^15.1.0",
-    "redis-mock": "^0.56.3",
+    "redis-mock": "github:yeahoffline/redis-mock",
     "sinon": "^10.0.0",
     "summarize": "^1.5.0",
     "tap-spec": "^5.0.0",

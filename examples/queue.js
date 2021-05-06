@@ -1,7 +1,7 @@
 'use strict';
 
 const logger = require('./log');
-const log = logger('queue ');
+const log = logger('queue');
 
 const Scheduler = require('../lib/scheduler');
 
@@ -15,56 +15,117 @@ const scheduler = new Scheduler({
 });
 
 const urls = [
-    // 'https://www.splitbrain.org/services/ots',
-    // 'https://github.com/mozilla/readability',
-    // 'https://www.elastic.co/products/apm',
-    // 'https://github.com/kalliope-project/kalliope/',
-    // 'https://docs.droplit.io/docs/containers',
-
-    // 'http://wiki.psuter.ch/doku.php?id=solve_raspbian_sd_card_corruption_issues_with_read-only_mounted_root_partition',
-    // 'https://github.com/awnumar/memguard/blob/master/README.md',
-    // 'https://github.com/parro-it/libui-node',
-    // 'https://github.com/ddollar/forego',
-    // 'https://github.com/wpmed92/backpropaganda',
-    // 'https://github.com/outline/outline',
-    // 'https://itnext.io/going-multithread-with-node-js-492258ba32cf',
-    // 'http://www.bloomberg.com/news/articles/2016-05-24/as-zenefits-stumbles-gusto-goes-head-on-by-selling-insurance',
-    'http://www.goliatone.com/blog/2015/11/13/raspberry-pi-nodejs-open-zwave/',
+    'http://www.goliatone.com',
+    // 'https://www.splitbrain.org',
+    // 'https://github.com/mozilla',
+    // 'https://www.elastic.co',
+    // 'https://github.com',
+    // 'https://docs.droplit.io',
+    // 'http://wiki.psuter.ch',
+    // 'https://github.com',
+    // 'https://github.com',
+    // 'https://github.com',
+    // 'https://github.com',
+    // 'https://github.com',
+    // 'https://itnext.io',
+    // 'http://www.bloomberg.com',
 ];
 
-// (async _ => {
-//     console.log('get active tasks');
-//     let ids = await scheduler.getActiveTasks();
-//     let tasks = await scheduler.getTasks(ids);
-//     console.log(ids)
-//     console.log(tasks)
-//     for (let task of tasks) {
-//         console.log(task.id);
-//         console.log(task.key);
-//         console.log(task.ttlKey);
-//     }
-// })();
+(async _ => {
+    console.info('get active tasks');
+    let all, active, failed, completed, tasks;
 
-addTaskWorker();
+    try {
+        all = await scheduler.getAllTaskIds();
+    } catch (error) {
+        console.error('error all');
+        console.error(error);
+        process.exit();
+    }
+
+    try {
+        active = await scheduler.getActiveTasks();
+    } catch (error) {
+        console.error('error active');
+        console.error(error);
+        process.exit();
+    }
+
+    try {
+        failed = await scheduler.getFailedTasks();
+    } catch (error) {
+        console.error('error failed');
+        console.error(error);
+        process.exit();
+    }
+
+    try {
+        completed = await scheduler.getCompletedTasks();
+    } catch (error) {
+        console.error('error completed');
+        console.error(error);
+        process.exit();
+    }
+
+    try {
+        tasks = await scheduler.getTasks(all);
+    } catch (error) {
+        console.error('error tasks');
+        console.error(error);
+        process.exit();
+    }
+
+    console.log('all', all.length);
+    console.log('active', active.length);
+    console.log('failed', failed.length);
+    console.log('completed', completed.length);
+
+
+    if (all.length > 0) {
+        console.info(all)
+        console.info(tasks)
+
+        for (let task of tasks) {
+            console.info(task.id);
+            console.info(task.key);
+            console.info(task.ttlKey);
+        }
+    }
+
+    scheduler.backend.client.flushall().then(addTaskWorker);
+
+})();
+
+
+// addTaskWorker();
 
 function addTaskWorker() {
+    if (urls.length === 0) return log.info('Done!');
+
     counter++;
 
     const index = scheduler.backend.getUid();
-    log('Create task %s, ID: "%s"', counter, index);
+    log.info('Create task %s, ID: "%s"', counter, index);
 
-    scheduler.addTask({
+    let task = {
         id: index,
-        // maxRuns: 5,
-        maxRuns: 1,
+        queue: 'runner.execute',
+        schedule: '*/1 * * * *',
+        maxRuns: randomInt(2, 4),
         maxTries: 5,
         // expire: 2000,
         data: {
             url: urls.pop()
         }
-    }).then(_ => {
-        if (urls.length > 0) addTaskWorker();
-        else log('Done!');
-        // setTimeout(addTaskWorker, randomInt(200, 1000));
-    });
+    };
+
+    log.info('Task has a max run of: %s', task.maxRuns);
+
+    scheduler.addTask(task).then(_ => {
+        setTimeout(addTaskWorker, randomInt(200, 1000));
+    }).catch(console.error);
+}
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }

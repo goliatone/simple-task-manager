@@ -122,22 +122,22 @@ test('Infinity will be serialized properly for maxRuns and maxTries', t => {
     t.end();
 });
 
-test('shouldRun: will fail tasks with an errorCount higher than maxTries', t => {
+test('updateState: will fail tasks with an errorCount higher than maxTries', t => {
     const task = new Task({
         maxTries: 2,
         errorCount: 3
     });
-    const state = task.shouldRun('error');
+    const state = task.updateState('error');
     t.equals(state.action, 'fail', 'action should be "fail"');
     t.end();
 });
 
-test.only('shouldRun: will enqueue tasks with an errorCount lower than maxTries', t => {
+test.only('updateState: will enqueue tasks with an errorCount lower than maxTries', t => {
     const task = new Task({
         maxTries: 3,
         errorCount: 1
     });
-    const state = task.shouldRun('error');
+    const state = task.updateState('error');
     t.equals(state.action, 'delay', 'action should be "delay"');
     t.end();
 });
