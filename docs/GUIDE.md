@@ -60,13 +60,13 @@ redis-cli config set notify-keyspace-events KEA
 Listen for events:
 
 ```
-redis-cli --csv psubscribe '__key*__:*'
+redis-cli --csv psubscribe '__keyspace@*__:*'
 ```
 
 If you want to use docker:
 
 ```
-docker exec -ti c19a0f737a29 redis-cli --csv psubscribe '__key*__:*'
+docker exec -ti c19a0f737a29 redis-cli --csv psubscribe '__keyspace@*__:*'
 ```
 
 
@@ -173,3 +173,11 @@ scheduler.addTask(task)
 scheduler.addTask(task)
     .interval(Date, Date);
 ```
+
+## Task Watchdog
+
+* How long should a task take?
+* How do we know if a task times out?
+* What happens if a task takes longer to execute than the next interval exec?
+
+## Garbage Collection
