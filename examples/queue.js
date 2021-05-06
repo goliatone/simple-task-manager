@@ -109,8 +109,8 @@ function addTaskWorker() {
 
     let task = {
         id: index,
-        queue: 'link.archive',
-        schedule: '*/2 * * * *',
+        queue: 'runner.execute',
+        schedule: '*/1 * * * *',
         maxRuns: randomInt(2, 4),
         maxTries: 5,
         // expire: 2000,
