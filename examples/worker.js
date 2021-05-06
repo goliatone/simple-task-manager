@@ -6,7 +6,7 @@ const Worker = require('../lib/workers');
 const log = logger('worker');
 
 const worker = new Worker({
-    queue: 'link.archive',
+    queue: 'runner.execute',
     logger: logger('manager'),
     backend: {
         host: 'localhost',
@@ -28,7 +28,7 @@ worker
         log.info('------------------------------');
         log.info('----- TASK RAN ----');
         log.info('Job complete...\n');
-        log.info('- Task has run "%s/%s" times with "%s" errors', task.runs, task.maxRuns, task.errorCount);
+        log.info('- Task has run "%s/%s" times with "%s" errors', task.runs, task.maxRuns, task.totalErrors);
         log.info('- "job" ran "%s" times with %s errors and %s failures', worker.runs - worker.errors, worker.errors, worker.failed);
         log.info('------------------------------');
         log.info('------------------------------');
@@ -55,10 +55,10 @@ async function taskHandler(task) {
 
     const timeout = randomInt(100, 2000);
 
-    if (timeout > 1400) {
-        log.error('Timed out error...');
-        throw new Error(`${task.id}`, 504);
-    }
+    // if (timeout > 1400) {
+    //     log.error('Timed out error...');
+    //     throw new Error(`${task.id}`, 504);
+    // }
 
     return new Promise((resolve, reject) => {
         setTimeout(_ => {
