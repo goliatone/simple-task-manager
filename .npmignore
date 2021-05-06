@@ -57,6 +57,9 @@ pids
 logs
 results
 
+examples/*
+examples/*.js
+tests/*
 npm-debug.log
 node_modules
 */.repl_history
@@ -71,3 +74,7 @@ Gruntfile.js
 .git/index
 .jshintrc
 TODO.md 
+.git 
+.nyc_output/*
+.vscode
+.tmp
